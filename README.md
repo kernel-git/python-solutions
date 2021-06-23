@@ -202,7 +202,7 @@ class Node:
     self.right = right
 ```
 
-**Решение:** [нет](https://vk.com/video303007735_456239505)
+**Решение:** [здесь](./main30.py)
 ## Задача 31
 ### Binary Search Tree Generator
 Реализуйте класс BSTGenerator, который представляет собой генератор по обходу бинарного дерева по порядку
