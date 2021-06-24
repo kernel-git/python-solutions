@@ -1,28 +1,46 @@
-import time
+import re
+
+OPERATORS = {
+        '+': float.__add__,
+        '-': float.__sub__,
+        '*': float.__mul__,
+        '/': float.__idiv__,
+        '%': float.__mod__,
+        '^': float.__pow__,
+    }
 
 
-def expired_cache(timeout):
-    def decorator(func):
-        func.cached = {}
+def reversed_polish_notation(expr):
+    """
+    Возвращает результат вычисленного выражения записанного в виде обратной
+    польской нотации
+    expr = string
+    """
+    ops = OPERATORS.keys()
+    stack = []
 
-        def wrapper(*args, **kwargs):
-            key = args + tuple(sorted(kwargs.items()))
-            if key not in func.cached or time.time() - func.cached[key][1] > timeout:
-                print("first time", key)
-                func.cached[key] = func(*args, **kwargs), time.time()
-            return func.cached[key][0]
+    for atom in re.split(r"\s+", expr):
+        try:
+            atom = float(atom)
+            stack.append(atom)
+        except ValueError:
+            for oper in atom:
+                if oper not in ops:
+                    continue
+                try:
+                    oper2 = stack.pop()
+                    oper1 = stack.pop()
+                except IndexError:
+                    raise Exception(u"Маловато операндов")
 
-        return wrapper
-    return decorator
+                try:
+                    oper = OPERATORS[oper](oper1, oper2)
+                except ZeroDivisionError:
+                    raise Exception(u"Нельзя делить на 0")
 
+                stack.append(oper)
 
-@expired_cache(0.9)
-def sum(a, b):
-    return a + b
+    if len(stack) != 1:
+        raise Exception(u"Многовато операндов")
 
-
-sum(1, 2)
-sum(2, 3)
-time.sleep(1)
-print("go")
-sum(1, 2)
+    return stack.pop()

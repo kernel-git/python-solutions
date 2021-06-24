@@ -1,30 +1,16 @@
-import time
+string = input()
+arr = []
 
+for val in string:
+    if val == '{' or val == '(' or val == '[':
+        arr.append(val)
 
-def cached(size):
-    def decorator(func):
-        func.cached = {}
+    if val == '}' or val == ')' or val == ']':
+        if len(arr) == 0:
+            raise ValueError(f'{string[:string.find(val)]} > {string[string.find(val):]}')
+        delee = arr.pop(len(arr) - 1)
+        if not chr(ord(val) - 2) == delee and not chr(ord(val) - 1) == delee:
+            raise ValueError(f'{string[:string.find(val)]} > {string[string.find(val):]}')
 
-        def wrapper(*args, **kwargs):
-            key = args + tuple(sorted(kwargs.items()))
-            if key not in func.cached:
-                if len(func.cached) >= size:
-                    print("clearing")
-                    func.cached.clear()
-                print("first time", key)
-                func.cached[key] = func(*args, **kwargs), time.time()
-            return func.cached[key][0]
-
-        return wrapper
-    return decorator
-
-
-@cached(2)
-def sum(a, b):
-    return a + b
-
-
-sum(1, 2)
-sum(2, 3)
-sum(3, 4)
-sum(1, 2)
+if not len(arr) == 0:
+    raise ValueError(f'{string} <')

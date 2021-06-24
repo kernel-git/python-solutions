@@ -1,34 +1,27 @@
-# tasks = ["A", "A", "A", "B", "B", "B"]
-tasks = ["A", "A", "A", "B", "B", "B", "B", 'B', 'B', 'Q', "C", "D", "C"]
-n = 2
-BIG = 10 ** 9 + 7
-last = [-BIG] * 26
-kol = [0] * 26
-for i in range(len(tasks)):
-    kol[ord(tasks[i]) - ord('A')] += 1
+class Node:
+    def __init__(self, value=0, left=None, right=None):
+        self.value = value
+        self.left = left
+        self.right = right
 
-taken = 0
-i = -1
-while taken < len(tasks):
-    i += 1
-    mx, ps = 0, -1
-    for j in range(26):
-        if i - last[j] > n and kol[j] > mx:
-            mx = kol[j]
-            ps = j
-    if ps == -1:
-        skip = BIG
-        for j in range(26):
-            if kol[j] > 0:
-                skip = min(skip, n - (i - last[j]) + 1)
 
-        for j in range(skip):
-            print("w", end=" ")
-        i += skip - 1
-        continue
-    last[ps] = i
-    kol[ps] -= 1
-    taken += 1
-    print(chr(ord('A') + ps), end=" ")
+def bst_generator(head):
+    if head.left is not None:
+        yield from bst_generator(head.left)
+    yield head
+    if head.right is not None:
+        yield from bst_generator(head.right)
 
-print("\nans: ", i + 1)
+
+v1 = Node(1)
+v2 = Node(2, v1)
+v5 = Node(5)
+v4 = Node(4, v2, v5)
+v9 = Node(9)
+v8 = Node(8, right=v9)
+v7 = Node(7, v4, v8)
+head = v7
+
+
+for node in bst_generator(head):
+    print(node.value)

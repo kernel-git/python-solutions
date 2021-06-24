@@ -1,32 +1,22 @@
-# matrix = []
-# n, m = int(input("n=")), int(input("m="))
-# for i in range(n):
-#     matrix.append([int(item) for item in input().split()])
-
-
-def go(x, y):
-    if x < 0 or y < 0 or x >= n or y >= n:
+def merge_sort(l, r):
+    if r - l <= 1:
         return
-    if matrix[x][y] == 0 or mrk[x][y]:
-        return
-    mrk[x][y] = True
-    go(x + 1, y)
-    go(x - 1, y)
-    go(x, y + 1)
-    go(x, y - 1)
+    d = (l + r) // 2
+    merge_sort(l, d)
+    merge_sort(d, r)
+    ll, rr = l, d
+    sorted = []
+    while ll < d or rr < r:
+        if ll != d and (rr == r or arr[ll] <= arr[rr]):
+            sorted.append(arr[ll])
+            ll += 1
+        else:
+            sorted.append(arr[rr])
+            rr += 1
+    for i in range(l, r):
+        arr[i] = sorted[i - l]
 
 
-n, m = 2, 3
-matrix = [[1, 0, 1],
-          [1, 1, 0]]
-mrk = [[False for j in range(m)] for i in range(n)]
-
-ans = 0
-for i in range(n):
-    for j in range(m):
-        if matrix[i][j] == 0 or mrk[i][j]:
-            continue
-        ans += 1
-        go(i, j)
-
-print(ans)
+arr = [1, 3, 19, 14, 2, 10, 2, 1, -10, 1000, 0]
+merge_sort(0, len(arr))
+print(arr)

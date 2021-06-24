@@ -1,13 +1,28 @@
-def singleton(class_):
-    instances = {}
-
-    def get_instance(*args, **kwargs):
-        if class_ not in instances:
-            instances[class_] = class_(*args, **kwargs)
-        return instances[class_]
-    return get_instance()
+import time
 
 
-@singleton
-class MyClass:
-    pass
+def expired_cache(timeout):
+    def decorator(func):
+        func.cached = {}
+
+        def wrapper(*args, **kwargs):
+            key = args + tuple(sorted(kwargs.items()))
+            if key not in func.cached or time.time() - func.cached[key][1] > timeout:
+                print("first time", key)
+                func.cached[key] = func(*args, **kwargs), time.time()
+            return func.cached[key][0]
+
+        return wrapper
+    return decorator
+
+
+@expired_cache(0.9)
+def sum(a, b):
+    return a + b
+
+
+sum(1, 2)
+sum(2, 3)
+time.sleep(1)
+print("go")
+sum(1, 2)

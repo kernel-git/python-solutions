@@ -1,44 +1,68 @@
-def A(n, m):
-    kol = 1
-    for i in range(m):
-        kol *= n - i
-    return kol
+import random
 
 
-def get_nth(n, m, nth):
-    mrk = [False] * n
-    ans = []
-    for i in range(m):
-        a = A(n - i - 1, m - i - 1)
-        for j in range(n):
-            if mrk[j]:
-                continue
-            if nth >= a:
-                nth -= a
-                continue
-            ans.append(j + 1)
-            mrk[j] = True
-            break
-    return ans
+class Node:
+    def __init__(self, value=0, next=None):
+        self.value = value
+        self.next = next
 
 
-class Iterator:
-    def __iter__(self):
-        return self
+def print_list(head):
+    current = head
+    while current is not None:
+        print(current.value, end=" ")
+        current = current.next
 
-    def __init__(self, n, m):
-        self.n = n
-        self.m = m
-        self.count = 0
-        self.maxn = A(n, m)
 
-    def __next__(self):
-        if self.count < self.maxn:
-            self.count += 1
-            return get_nth(self.n, self.m, self.count - 1)
+def partition(head, x):
+    less, big, less_head, big_head = None, None, None, None
+    current = head
+    while current is not None:
+        if current.value < x:
+            if less_head is None:
+                less_head = current
+                less = current
+            else:
+                less.next = current
+                less = less.next
         else:
-            raise StopIteration
+            if big_head is None:
+                big_head = current
+                big = current
+            else:
+                big.next = current
+                big = big.next
+        current = current.next
+    if less_head is None:
+        return big_head
+    if big_head is None:
+        return less_head
+    less.next = big_head
+    big.next = None
+    return less_head
 
 
-for gg in Iterator(4, 3):
-    print(gg)
+# x = 5
+arr = [int(item) for item in input("arr: ").split()]
+x = int(input("x: "))
+
+head = Node(arr[0])
+prev = head
+for i in range(1, len(arr)):
+    current = Node(arr[i])
+    prev.next = current
+    prev = current
+
+# head = Node()
+# prev = head
+# for i in range(15):
+#     value = random.randint(0, 10)
+#     current = Node(value)
+#     prev.next = current
+#     prev = current
+
+print_list(head)
+print()
+head = partition(head, x)
+print_list(head)
+
